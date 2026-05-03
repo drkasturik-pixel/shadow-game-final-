@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Match the Shadow</title>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #fff8dc;
+}
+
+h1 {
+    color: purple;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+img {
+    width: 120px;
+    cursor: grab;
+}
+
+.dropzone {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed gray;
+}
+
+.correct {
+    border: 3px solid green;
+}
+
+.wrong {
+    border: 3px solid red;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Find the Correct Shadow</h1>
+
+<button onclick="speak()">🔊 Instructions</button>
+
+<!-- Sounds -->
+<audio id="bg" autoplay loop>
+<source src="https://www.bensound.com/bensound-music/bensound-funnysong.mp3">
+</audio>
+
+<audio id="clap">
+<source src="https://www.soundjay.com/human/applause-8.mp3">
+</audio>
+
+<audio id="wrong">
+<source src="https://www.soundjay.com/button/beep-10.mp3">
+</audio>
+
+<div class="container">
+
+<!-- LEFT SIDE -->
+<div class="column">
+<img src="girl1.png" draggable="true" ondragstart="drag(event)" id="1" data-match="1">
+<img src="boy1.png" draggable="true" ondragstart="drag(event)" id="2" data-match="2">
+<img src="singer1.png" draggable="true" ondragstart="drag(event)" id="3" data-match="3">
+<img src="skipping1.png" draggable="true" ondragstart="drag(event)" id="4" data-match="4">
+</div>
+
+<!-- RIGHT SIDE -->
+<div class="column">
+<div class="dropzone" data-match="3" ondrop="drop(event)" ondragover="allowDrop(event)">
+<img src="shadow3.png">
+</div>
+
+<div class="dropzone" data-match="1" ondrop="drop(event)" ondragover="allowDrop(event)">
+<img src="shadow1.png">
+</div>
+
+<div class="dropzone" data-match="4" ondrop="drop(event)" ondragover="allowDrop(event)">
+<img src="shadow4.png">
+</div>
+
+<div class="dropzone" data-match="2" ondrop="drop(event)" ondragover="allowDrop(event)">
+<img src="shadow2.png">
+</div>
+</div>
+
+</div>
+
+<script>
+
+function speak() {
+    let msg = new SpeechSynthesisUtterance(
+        "Drag each picture and match it to the correct shadow."
+    );
+    speechSynthesis.speak(msg);
+}
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("match", ev.target.dataset.match);
+    ev.dataTransfer.setData("id", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+
+    let draggedMatch = ev.dataTransfer.getData("match");
+    let targetMatch = ev.currentTarget.dataset.match;
+    let draggedId = ev.dataTransfer.getData("id");
+
+    if (draggedMatch === targetMatch) {
+        ev.currentTarget.classList.add("correct");
+        document.getElementById("clap").play();
+
+        let img = document.getElementById(draggedId);
+        ev.currentTarget.appendChild(img);
+    } else {
+        ev.currentTarget.classList.add("wrong");
+        document.getElementById("wrong").play();
+
+        setTimeout(() => {
+            ev.currentTarget.classList.remove("wrong");
+        }, 1000);
+    }
+}
+
+</script>
+
+</body>
+</html>
